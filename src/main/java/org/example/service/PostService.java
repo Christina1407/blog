@@ -1,10 +1,11 @@
 package org.example.service;
 
 import org.example.model.Post;
+import org.example.model.dto.PostCreateDto;
+import org.example.model.dto.PostReadDto;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
+
 
 public interface PostService {
-    Post savePost(Long userId, Post post);
+    PostReadDto savePost(PostCreateDto postCreateDto);
 }
