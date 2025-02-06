@@ -1,14 +1,14 @@
 package org.example.model.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 
-public record UserDto(
-        Long id,
+@Builder
+public record UserCreateDto(
         @NotBlank(message = "email is empty")
         @Email(message = "email is not well-formed email address")
         @Size(min = 6, max = 254, message = "email minLength = 6 maxLength = 254")

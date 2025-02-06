@@ -5,10 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import lombok.*;
+import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
-
-
 
 
 @Builder
@@ -18,6 +17,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Getter
 @Setter
+@AccessType(AccessType.Type.PROPERTY)
 public class User {
     @Id
     @Column(name = "id", nullable = false)
