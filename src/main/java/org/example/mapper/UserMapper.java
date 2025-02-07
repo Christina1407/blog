@@ -7,6 +7,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
+    public UserReadDto map(User user) {
+        return getBuild(user);
+    }
+
+    public User map(UserCreateDto userCreateDto) {
+        return getBuild(userCreateDto);
+    }
+
     private UserReadDto getBuild(User user) {
         return UserReadDto.builder()
                 .id(user.getId())
@@ -20,13 +28,5 @@ public class UserMapper {
                 .name(userCreateDto.name())
                 .email(userCreateDto.email())
                 .build();
-    }
-
-    public UserReadDto map(User user) {
-        return getBuild(user);
-    }
-
-    public User map(UserCreateDto userCreateDto) {
-        return getBuild(userCreateDto);
     }
 }

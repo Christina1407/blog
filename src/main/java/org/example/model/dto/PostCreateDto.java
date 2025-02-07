@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.time.LocalDateTime;
@@ -18,11 +19,8 @@ public record PostCreateDto(
         @NotBlank(message = "text is empty")
         @Size(min = 1, max = 1000, message = "text minLength = 1 maxLength = 1000")
         String text,
-        @JsonFormat(pattern = DATETIME_FORMAT)
-        LocalDateTime createdDate,
         @NotNull(message = "authorId is null")
         Long authorId
 
 ) {
-    private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 }

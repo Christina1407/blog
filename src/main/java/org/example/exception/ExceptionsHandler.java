@@ -1,9 +1,9 @@
 package org.example.exception;
 
+import org.example.controller.CommentController;
 import org.example.controller.PostController;
 import org.example.controller.UserController;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
-@RestControllerAdvice(assignableTypes = {UserController.class, PostController.class})
+@RestControllerAdvice(assignableTypes = {UserController.class, PostController.class, CommentController.class})
 public class ExceptionsHandler {
 
   @ExceptionHandler(NotFoundException.class)

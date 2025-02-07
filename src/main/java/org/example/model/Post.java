@@ -6,8 +6,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Builder
 @Entity
@@ -35,8 +38,6 @@ public class Post {
     private String text;
     @Column(name = "author_id", nullable = false)
     private Long authorId;
-
-
-
-
+    @MappedCollection(idColumn = "post_id")
+    private Set<Comment> comments;
 }
