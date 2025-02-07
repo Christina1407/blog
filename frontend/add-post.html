@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить пост</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Добавить пост</h1>
+    <form id="addPostForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="text">Текст:</label>
+            <input type="text" id="text" name="text" required>
+        </div>
+        <div class="form-group">
+            <label for="authorId">Id автора:</label>
+            <input type="text" id="authorId" name="authorId" required>
+        </div>
+        <div class="form-group">
+            <label for="image">Фотография:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+        </div>
+        <button type="submit">Добавить пост</button>
+    </form>
+</div>
+
+<script src="add-post.js"></script>
+</body>
+</html>
