@@ -6,11 +6,10 @@ import org.example.manager.PostManager;
 import org.example.manager.UserManager;
 import org.example.mapper.CommentMapper;
 import org.example.mapper.PostMapper;
-import org.example.model.Comment;
+import org.example.mapper.PostReactionMapper;
 import org.example.model.Post;
-import org.example.model.dto.PostCreateDto;
-import org.example.model.dto.PostReadDto;
-import org.example.repo.CommentRepository;
+import org.example.model.dto.*;
+import org.example.repo.PostReactionRepository;
 import org.example.repo.PostRepository;
 import org.example.service.PostService;
 import org.springframework.data.domain.Page;
@@ -18,9 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -30,9 +28,10 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final CommentMapper commentMapper;
+    private final PostReactionMapper reactionMapper;
     private final UserManager userManager;
     private final PostManager postManager;
-    private final CommentRepository commentRepository;
+    private final PostReactionRepository postReactionRepository;
 
     @Override
     public PostReadDto savePost(PostCreateDto postCreateDto) {
@@ -43,17 +42,41 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Post> findAllPosts(Pageable pageable) {
-
-        Page<Post> posts = postRepository.findAll(pageable);
-        return posts;
+    public List<PostReadDto> findAllPosts(Pageable pageable) {
+        List<Post> posts = postRepository.findAll(pageable).stream().
+                toList();
+        return postMapper.map(posts);
     }
 
     @Override
-    @Transactional(readOnly = true)//TODO убрать отдельное получение комментариев
+    @Transactional(readOnly = true)
     public PostReadDto findPostById(Long postId) {
         Post post = postManager.findPostById(postId);
-        List<Comment> comments = commentRepository.findAllByPostId(postId);
-        return postMapper.map(post, commentMapper.map(comments));
+        List<CommentReadDto> comments = commentMapper.map(post.getComments().stream().toList());
+        int reactionCount = post.getReactions().size();
+        return postMapper.map(post, comments, reactionCount);
+    }
+
+    @Override
+    public void addReaction(PostReactionDto reactionDto) {
+        //  userManager.findUserById(reactionDto.userId());
+        postManager.findPostById(reactionDto.postId());
+        postReactionRepository.save(reactionMapper.map(reactionDto));
+    }
+
+    @Override
+    public void deletePost(Long postId) {
+        Post post = postManager.findPostById(postId);
+        postRepository.delete(post);
+    }
+
+    @Override
+    public PostReadDto editPost(PostEditDto postEditDto, Long postId) {
+        Post post = postManager.findPostById(postId);
+       Optional.ofNullable(postEditDto.text())
+               .ifPresent(post::setText);
+        Optional.ofNullable(postEditDto.title())
+                .ifPresent(post::setTitle);
+        return postMapper.map(postRepository.save(post));
     }
 }

@@ -9,7 +9,6 @@ import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -40,4 +39,6 @@ public class Post {
     private Long authorId;
     @MappedCollection(idColumn = "post_id")
     private Set<Comment> comments;
+    @MappedCollection(idColumn = "post_id")
+    private Set<PostReaction> reactions;
 }

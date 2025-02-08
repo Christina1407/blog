@@ -8,10 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.mapper.PostMapper;
 import org.example.model.Post;
 import org.example.model.dto.PostCreateDto;
+import org.example.model.dto.PostEditDto;
 import org.example.model.dto.PostReadDto;
+import org.example.model.dto.PostReactionDto;
 import org.example.repo.PostRepository;
 import org.example.service.PostService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -30,22 +31,33 @@ import java.util.Optional;
 public class PostController {
     private final PostService postService;
     private final PostRepository postRepository;
-    private final PostMapper postMapper;
 
-    @PostMapping(value = "/test", consumes = "multipart/form-data")
+    @PostMapping(consumes = "multipart/form-data")
     @ResponseStatus(HttpStatus.CREATED)//TODO "test" title убрать
-    public PostReadDto savePost(@RequestParam("text") String text,
-                                @RequestParam("authorId") String authorId,
-                                @RequestParam("image") MultipartFile image) throws IOException {
-        //log.info("Попытка сохранения нового post {}", postCreateDto);
-        return postService.savePost(new PostCreateDto("test", image.getBytes(), text, Long.valueOf(authorId)));
+    public PostReadDto savePost(@ModelAttribute PostCreateDto postCreateDto) throws IOException {
+        log.info("Попытка сохранения нового post {}", postCreateDto);
+        return postService.savePost(postCreateDto);
+    }
+
+    @DeleteMapping("{postId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePost(@PathVariable("postId") @Min(1) Long postId) {
+        log.info("Попытка удаления post id = {}", postId);
+        //TODO кто удаляет пост? Сделать, когда будет авторизация
+        postService.deletePost(postId);
+    }
+
+    @PatchMapping("{postId}") //на фронте редактирование происходит при нажатии на сам текст title и text (так же как при редактировании комментария)
+    public PostReadDto editPost(@PathVariable("postId") @Min(1) Long postId,
+                                      @RequestBody @Valid PostEditDto postEditDto) {
+        log.info("Редактирование поста {} id = {}", postEditDto, postId);
+        return postService.editPost(postEditDto, postId);
     }
 
     @GetMapping//TODO переделать
     public List<PostReadDto> getAllPosts(Pageable pageable) {
         log.info("Get posts pageable = {}", pageable);
-        return postMapper.map(postService.findAllPosts(pageable).stream().
-                toList());
+        return postService.findAllPosts(pageable);
     }
 
     @GetMapping("/{postId}")
@@ -83,4 +95,9 @@ public class PostController {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
+    @PostMapping("/reactions")
+    public void addReaction(@RequestBody PostReactionDto reactionDto) {
+        postService.addReaction(reactionDto);
+    }
+
 }
