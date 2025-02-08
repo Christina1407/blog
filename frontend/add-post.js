@@ -5,12 +5,13 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
 
         const formData = new FormData();
+        formData.append('title', document.getElementById('title').value);
         formData.append('text', document.getElementById('text').value);
         formData.append('authorId', document.getElementById('authorId').value);
         formData.append('image', document.getElementById('image').files[0]);
 
         try {
-            const response = await fetch('http://localhost:8080/blog/posts/test', {
+            const response = await fetch('http://localhost:8080/blog/posts', {
                 method: 'POST',
                 body: formData
             });
