@@ -22,7 +22,7 @@ public class CorsFilter implements Filter {
         httpResponse.setHeader("Access-Control-Allow-Origin", "*");
 
         // Разрешаем определенные HTTP-методы
-        httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
 
         // Разрешаем определенные заголовки
         httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
