@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post Details</title>
+    <link rel="stylesheet" href="styles-post-details.css" />
+  </head>
+  <body>
+    <div id="postDetails"></div>
+    <div id="comments"></div>
+    <div id="addCommentSection">
+      <textarea id="newCommentText" placeholder="Add a comment..."></textarea>
+      <button id="addCommentButton" class="button">Add Comment</button>
+    </div>
+    <!-- Existing buttons for editing and deleting the post -->
+    <button id="editPostButton" class="button">Edit Post</button>
+    <button id="deletePostButton" class="button delete">Delete Post</button>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const postDetailsContainer = document.getElementById("postDetails");
+        const commentsContainer = document.getElementById("comments");
+        const newCommentText = document.getElementById("newCommentText");
+        const addCommentButton = document.getElementById("addCommentButton");
+        const editPostButton = document.getElementById("editPostButton");
+        const deletePostButton = document.getElementById("deletePostButton");
+
+        // Получаем ID поста из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get("postId");
+
+        // Функция для удаления поста
+        async function deletePost(postId) {
+          try {
+            const response = await fetch(
+              `http://localhost:8080/blog/posts/${postId}`,
+              {
+                method: "DELETE",
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Ошибка при удалении поста");
+            }
+            alert("Post deleted successfully!");
+            window.location.href = "index.html"; // Перенаправление на главную страницу после удаления
+          } catch (error) {
+            console.error("Ошибка:", error);
+            alert("Failed to delete the post.");
+          }
+        }
+
+        // ... (остальной код)
+
+        // Функция для получения данных поста
+        async function fetchPostDetails(postId) {
+          try {
+            const response = await fetch(
+              `http://localhost:8080/blog/posts/${postId}`
+            );
+            if (!response.ok) {
+              throw new Error("Ошибка при загрузке данных поста");
+            }
+            const post = await response.json();
+            displayPostDetails(post);
+          } catch (error) {
+            console.error("Ошибка:", error);
+          }
+        }
+
+        // Функция для отображения деталей поста и комментариев
+        function displayPostDetails(post) {
+          // Отображаем детали поста
+          postDetailsContainer.innerHTML = `
+                    <h2 id="postTitle">${post.title}</h2>
+                    <p id="postText">${post.text}</p>
+                    <img src="http://localhost:8080/blog/posts/image?postId=${post.id}" alt="${post.text}">
+                    <p id="likeCount" style="cursor: pointer;">&#x2764; ${post.reactionCount}</p> <!-- Heart icon -->
+                `;
+
+          // Добавляем обработчики событий для редактирования заголовка и текста
+          makeEditable("postTitle", post.id, "title");
+          makeEditable("postText", post.id, "text");
+
+          // Добавляем обработчик события для клика по сердечку
+          document
+            .getElementById("likeCount")
+            .addEventListener("click", async function () {
+              try {
+                const response = await fetch(
+                  "http://localhost:8080/blog/posts/reactions",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      postId: postId,
+                      reactionType: "LIKE",
+                    }),
+                  }
+                );
+                if (!response.ok) {
+                  throw new Error("Ошибка при добавлении лайка");
+                }
+                alert("Liked the post!");
+                fetchPostDetails(postId); // Перезагружаем данные поста
+              } catch (error) {
+                console.error("Ошибка:", error);
+                alert("Failed to like the post.");
+              }
+            });
+          // Отображаем комментарии, если они есть
+          if (post.comments && post.comments.length > 0) {
+            commentsContainer.innerHTML = "<h3>Comments:</h3>";
+            post.comments.forEach((comment) => {
+              const commentElement = document.createElement("div");
+              commentElement.classList.add("comment");
+              commentElement.innerHTML = `
+                            <p><strong>${comment.author}</strong>: <span class="comment-text">${comment.text}</span></p>
+                            <button class="button deleteCommentButton" data-comment-id="${comment.id}">Delete</button>
+                        `;
+              commentsContainer.appendChild(commentElement);
+
+              // Добавляем обработчик события для клика по тексту комментария
+              commentElement
+                .querySelector(".comment-text")
+                .addEventListener("click", function () {
+                  const currentText = this.textContent;
+                  const input = document.createElement("input");
+                  input.type = "text";
+                  input.value = currentText;
+                  this.replaceWith(input);
+                  input.focus();
+
+                  // Обработчик для сохранения комментария при нажатии Ctrl+Enter
+                  input.addEventListener("keydown", async function (event) {
+                    if (event.ctrlKey && event.key === "Enter") {
+                      const newText = input.value.trim();
+                      if (newText && newText !== currentText) {
+                        try {
+                          const response = await fetch(
+                            `http://localhost:8080/blog/posts/comments/${comment.id}`,
+                            {
+                              method: "PUT",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({
+                                text: newText,
+                              }),
+                            }
+                          );
+                          if (!response.ok) {
+                            throw new Error(
+                              "Ошибка при редактировании комментария"
+                            );
+                          }
+                          alert("Comment edited successfully!");
+                          fetchPostDetails(postId); // Перезагружаем данные поста
+                        } catch (error) {
+                          console.error("Ошибка:", error);
+                          alert("Failed to edit the comment.");
+                        }
+                      } else {
+                        input.replaceWith(document.createTextNode(currentText));
+                      }
+                    }
+                  });
+
+                  // Обработчик для выхода из режима редактирования при потере фокуса
+                  input.addEventListener("blur", function () {
+                    input.replaceWith(document.createTextNode(currentText));
+                  });
+                });
+
+              // Добавляем обработчик события для кнопки удаления комментария
+              commentElement
+                .querySelector(".deleteCommentButton")
+                .addEventListener("click", function () {
+                  const commentId = this.getAttribute("data-comment-id");
+                  deleteComment(commentId);
+                });
+            });
+          } else {
+            commentsContainer.innerHTML = "<p>No comments yet.</p>";
+          }
+        }
+
+        // Функция для добавления возможности редактирования
+        function makeEditable(elementId, postId, field) {
+          const element = document.getElementById(elementId);
+          if (!element) {
+            console.error(`Element with id "${elementId}" not found`);
+            return;
+          }
+          element.addEventListener("click", function () {
+            const currentText = this.textContent;
+            const input = document.createElement("textarea");
+            input.value = currentText;
+            this.replaceWith(input);
+            input.focus();
+
+            // Обработчик для сохранения изменений при нажатии Ctrl+Enter
+            input.addEventListener("keydown", async function (event) {
+              if (event.ctrlKey && event.key === "Enter") {
+                const newText = input.value.trim();
+                if (newText && newText !== currentText) {
+                  try {
+                    const response = await fetch(
+                      `http://localhost:8080/blog/posts/${postId}`,
+                      {
+                        method: "PATCH",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          [field]: newText,
+                        }),
+                      }
+                    );
+                    if (!response.ok) {
+                      throw new Error(`Ошибка при редактировании ${field}`);
+                    }
+                    alert(
+                      `${
+                        field.charAt(0).toUpperCase() + field.slice(1)
+                      } edited successfully!`
+                    );
+                    fetchPostDetails(postId); // Перезагружаем данные поста
+                  } catch (error) {
+                    console.error("Ошибка:", error);
+                    alert(`Failed to edit the ${field}.`);
+                  }
+                } else {
+                  input.replaceWith(
+                    document.createElement(
+                      elementId === "postTitle" ? "h2" : "p"
+                    )
+                  );
+                  element.textContent = currentText;
+                  element.id = elementId;
+                  element.classList.add("editable");
+                }
+              }
+            });
+
+            // Обработчик для выхода из режима редактирования при потере фокуса
+            input.addEventListener("blur", function () {
+              const newElement = document.createElement(
+                elementId === "postTitle" ? "h2" : "p"
+              );
+              newElement.textContent = currentText;
+              newElement.id = elementId;
+              newElement.classList.add("editable");
+              input.replaceWith(newElement);
+              makeEditable(elementId, postId, field);
+            });
+          });
+        }
+
+        // Функция для удаления комментария
+        async function deleteComment(commentId) {
+          try {
+            const response = await fetch(
+              `http://localhost:8080/blog/posts/comments/${commentId}`,
+              {
+                method: "DELETE",
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Ошибка при удалении комментария");
+            }
+            alert("Comment deleted successfully!");
+            fetchPostDetails(postId); // Перезагружаем данные поста
+          } catch (error) {
+            console.error("Ошибка:", error);
+            alert("Failed to delete the comment.");
+          }
+        }
+
+        // Функция для добавления нового комментария
+        async function addComment(postId, text) {
+          try {
+            const response = await fetch(
+              "http://localhost:8080/blog/posts/comments",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  text: text,
+                  authorId: 2,
+                  postId: postId,
+                }),
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Ошибка при добавлении комментария");
+            }
+            alert("Comment added successfully!");
+            newCommentText.value = ""; // Очистка текстового поля
+            fetchPostDetails(postId); // Перезагружаем данные поста
+          } catch (error) {
+            console.error("Ошибка:", error);
+            alert("Failed to add the comment.");
+          }
+        }
+
+        // Обработка нажатия кнопки добавления комментария
+        addCommentButton.addEventListener("click", function () {
+          const text = newCommentText.value.trim();
+          if (text) {
+            addComment(postId, text);
+          } else {
+            alert("Comment text cannot be empty.");
+          }
+        });
+
+        // Обработчик события для кнопки удаления поста
+        deletePostButton.addEventListener("click", function () {
+          if (confirm("Are you sure you want to delete this post?")) {
+            deletePost(postId);
+          }
+        });
+
+        // Загрузка деталей поста при загрузке страницы
+        fetchPostDetails(postId);
+      });
+    </script>
+  </body>
+</html>
