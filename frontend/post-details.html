@@ -1,21 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Post Details</title>
-    <link rel="stylesheet" href="css/styles-post-details.css">
-</head>
-<body>
-    <div id="postDetails"></div>
-    <div id="comments"></div>
-    <div id="addCommentSection">
+    <link rel="stylesheet" href="css/styles-post-details.css" />
+  </head>
+  <body>
+    <div>
+      <button id="backButton" class="back-button">Назад к постам</button>
+      <div id="postDetails">
+        <h2 id="postTitle"></h2>
+        <div id="postText"></div>
+        <img id="postImage" alt="Post image" />
+        <input
+          type="file"
+          id="imageUpload"
+          accept="image/*"
+          style="display: none"
+        />
+      </div>
+      <div id="comments"></div>
+      <div>
+        <input type="file" id="imageUpload" accept="image/*" />
+        <button onclick="updatePostImage(window.postId)">Update Image</button>
+      </div>
+      <div id="addCommentSection">
         <textarea id="newCommentText" placeholder="Add a comment..."></textarea>
         <button id="addCommentButton" class="button">Add Comment</button>
+      </div>
+      <button id="deletePostButton" class="button delete">Delete Post</button>
+      <script src="js/post-details.js" type="module"></script>
+      <script src="js/edit-post.js" type="module"></script>
     </div>
-    <button id="editPostButton" class="button">Edit Post</button>
-    <button id="deletePostButton" class="button delete">Delete Post</button>
-
-    <script src="js/post-details.js" type="module"></script>
-</body>
+  </body>
+  <script type="module">
+    // Function to extract postId from the URL
+    function getPostIdFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('postId');
+    }
+  
+    // Get the postId
+    const postId = getPostIdFromUrl();
+  
+    // Make postId available globally
+    window.postId = postId;
+  </script>
 </html>

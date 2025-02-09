@@ -70,7 +70,6 @@ async function editComment(commentId, newText, postId) {
         if (!response.ok) {
             throw new Error("Ошибка при редактировании комментария");
         }
-        alert("Comment edited successfully!");
         location.reload();
     } catch (error) {
         console.error("Ошибка:", error);
@@ -86,7 +85,6 @@ async function deleteComment(commentId, postId) {
         if (!response.ok) {
             throw new Error("Ошибка при удалении комментария");
         }
-        alert("Comment deleted successfully!");
         location.reload();
     } catch (error) {
         console.error("Ошибка:", error);
@@ -110,7 +108,6 @@ export async function addComment(postId, text) {
         if (!response.ok) {
             throw new Error("Ошибка при добавлении комментария");
         }
-        alert("Comment added successfully!");
         location.reload();
     } catch (error) {
         console.error("Ошибка:", error);

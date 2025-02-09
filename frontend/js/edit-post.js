@@ -1,32 +1,94 @@
 export function makeEditable(elementId, postId, field) {
     const element = document.getElementById(elementId);
-    if (!element) {
-        console.error(`Element with id "${elementId}" not found`);
-        return;
-    }
-    element.addEventListener("click", function () {
-        const currentText = this.textContent;
-        const input = document.createElement("textarea");
-        input.value = currentText;
-        this.replaceWith(input);
-        input.focus();
+    let originalContent;
 
-        input.addEventListener("keydown", async function (event) {
-            if (event.ctrlKey && event.key === "Enter") {
-                const newText = input.value.trim();
-                if (newText && newText !== currentText) {
-                    await updatePost(postId, field, newText);
-                } else {
-                    restoreElement(input, elementId, currentText);
-                }
+    element.addEventListener("click", function() {
+        if (field === "text") {
+            originalContent = Array.from(element.children)
+                .map(p => p.textContent)
+                .join('\n\n');
+        } else {
+            originalContent = element.textContent;
+        }
+
+        const textarea = document.createElement("textarea");
+        textarea.value = originalContent;
+        textarea.style.width = "100%";
+        textarea.style.height = field === "text" ? "200px" : "auto";
+
+        element.replaceWith(textarea);
+        textarea.focus();
+
+        textarea.addEventListener("blur", function() {
+            const newText = textarea.value.trim();
+            if (newText !== originalContent) {
+                updatePost(postId, field, newText);
+            } else {
+                restoreOriginalContent();
             }
         });
 
-        input.addEventListener("blur", function () {
-            restoreElement(input, elementId, currentText);
+        textarea.addEventListener("keydown", function(e) {
+            if (e.ctrlKey && e.key === "Enter") {
+                e.preventDefault();
+                textarea.blur();
+            }
         });
     });
+
+    function restoreOriginalContent() {
+        if (field === "text") {
+            const div = document.createElement("div");
+            div.id = elementId;
+            originalContent.split('\n\n').forEach(paragraph => {
+                if (paragraph.trim() !== '') {
+                    const p = document.createElement('p');
+                    p.textContent = paragraph.trim();
+                    div.appendChild(p);
+                }
+            });
+            textarea.replaceWith(div);
+        } else {
+            const h2 = document.createElement("h2");
+            h2.id = elementId;
+            h2.textContent = originalContent;
+            textarea.replaceWith(h2);
+        }
+    }
 }
+
+// Function to handle image upload
+export function updatePostImage(postId) {
+    const fileInput = document.getElementById('imageUpload');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert('Please select an image to upload.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch(`http://localhost:8080/blog/posts/${postId}/image`, {
+        method: 'PUT',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Ошибка при обновлении изображения');
+        }
+        alert('Image updated successfully!');
+        location.reload();
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Failed to update the image.');
+    });
+}
+
+// Attach the function to the window object
+window.updatePostImage = updatePostImage;
 
 async function updatePost(postId, field, newText) {
     try {
