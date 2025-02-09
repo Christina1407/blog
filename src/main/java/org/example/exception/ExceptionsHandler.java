@@ -15,13 +15,15 @@ import java.util.stream.Collectors;
 @RestControllerAdvice(assignableTypes = {UserController.class, PostController.class, CommentController.class})
 public class ExceptionsHandler {
 
-  @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ExceptionResponse handleNotFoundException(NotFoundException ex) {
         return new ExceptionResponse(HttpStatus.NOT_FOUND.name(), "The required object was not found", ex.getMessage(),
                 LocalDateTime.now());
     }
 
     @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ExceptionResponse handleConflictException(final ConflictException ex) {
         return new ExceptionResponse(HttpStatus.CONFLICT.name(), ex.getReason(), ex.getMessage(), LocalDateTime.now());
     }

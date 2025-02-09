@@ -1,6 +1,7 @@
 package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.example.manager.PostManager;
 import org.example.manager.UserManager;
@@ -13,9 +14,11 @@ import org.example.repo.PostReactionRepository;
 import org.example.repo.PostRepository;
 import org.example.service.PostService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,10 +45,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PostReadDto> findAllPosts(Pageable pageable) {
-        List<Post> posts = postRepository.findAll(pageable).stream().
+    public Page<PostReadDto> findAllPosts(Pageable pageable) {
+        Page<Post> postPage = postRepository.findAll(pageable);
+        List<Post> posts = postPage.stream().
                 toList();
-        return postMapper.map(posts);
+        return new PageImpl<>(postMapper.map(posts), pageable, postPage.getTotalElements());
     }
 
     @Override
@@ -78,5 +82,13 @@ public class PostServiceImpl implements PostService {
         Optional.ofNullable(postEditDto.title())
                 .ifPresent(post::setTitle);
         return postMapper.map(postRepository.save(post));
+    }
+
+    @Override
+    @SneakyThrows
+    public void changeImage(Long postId, MultipartFile image) {
+        Post post = postManager.findPostById(postId);
+        post.setImage(image.getBytes());
+        postRepository.save(post);
     }
 }

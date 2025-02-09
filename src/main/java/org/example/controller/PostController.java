@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.exception.NotFoundException;
 import org.example.mapper.PostMapper;
 import org.example.model.Post;
 import org.example.model.dto.PostCreateDto;
@@ -13,6 +14,7 @@ import org.example.model.dto.PostReadDto;
 import org.example.model.dto.PostReactionDto;
 import org.example.repo.PostRepository;
 import org.example.service.PostService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -47,15 +49,16 @@ public class PostController {
         postService.deletePost(postId);
     }
 
-    @PatchMapping("{postId}") //на фронте редактирование происходит при нажатии на сам текст title и text (так же как при редактировании комментария)
+    @PatchMapping("{postId}") //на фронте редактирование происходит при нажатии на сам текст title и text (так же как при редактировании комментария),
+    // Ctrl+Enter сохраняется
     public PostReadDto editPost(@PathVariable("postId") @Min(1) Long postId,
                                       @RequestBody @Valid PostEditDto postEditDto) {
         log.info("Редактирование поста {} id = {}", postEditDto, postId);
         return postService.editPost(postEditDto, postId);
     }
 
-    @GetMapping//TODO переделать
-    public List<PostReadDto> getAllPosts(Pageable pageable) {
+    @GetMapping
+    public Page<PostReadDto> getAllPosts(Pageable pageable) {
         log.info("Get posts pageable = {}", pageable);
         return postService.findAllPosts(pageable);
     }
@@ -66,12 +69,10 @@ public class PostController {
         return postService.findPostById(postId);
     }
 
-    @PostMapping("/image")//TODO переделать
-    public void loadImage(@RequestParam("file") MultipartFile file,
-                          @RequestParam("postId") Long postId) throws IOException {
-        Post byId = postRepository.findById(2L).get();
-        byId.setImage(file.getBytes());
-        postRepository.save(byId);
+    @PutMapping(value = "/{postId}/image", consumes = "multipart/form-data")
+    public void changeImage(@PathVariable("postId") Long postId,
+                            @RequestParam("file") MultipartFile image) {
+        postService.changeImage(postId, image);
     }
 
     @GetMapping("/image")//TODO переделать
