@@ -5,8 +5,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.exception.NotFoundException;
-import org.example.mapper.PostMapper;
 import org.example.model.Post;
 import org.example.model.dto.PostCreateDto;
 import org.example.model.dto.PostEditDto;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -35,8 +32,8 @@ public class PostController {
     private final PostRepository postRepository;
 
     @PostMapping(consumes = "multipart/form-data")
-    @ResponseStatus(HttpStatus.CREATED)//TODO "test" title убрать
-    public PostReadDto savePost(@ModelAttribute PostCreateDto postCreateDto) throws IOException {
+    @ResponseStatus(HttpStatus.CREATED)
+    public PostReadDto savePost(@ModelAttribute PostCreateDto postCreateDto){
         log.info("Попытка сохранения нового post {}", postCreateDto);
         return postService.savePost(postCreateDto);
     }

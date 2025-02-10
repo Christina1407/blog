@@ -41,4 +41,6 @@ public class Post {
     private Set<Comment> comments;
     @MappedCollection(idColumn = "post_id")
     private Set<PostReaction> reactions;
+    @MappedCollection(idColumn = "post_id")
+    private Set<PostTag> tags;
 }

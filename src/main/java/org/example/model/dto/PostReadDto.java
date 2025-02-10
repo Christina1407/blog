@@ -13,6 +13,7 @@ public record PostReadDto(Long id,
                           @JsonFormat(pattern = DATETIME_FORMAT)
                           LocalDateTime createdDate,
                           Long authorId,
+                          List<String> tags,
                           List<CommentReadDto> comments,
                           int reactionCount,
                           int commentCount) {

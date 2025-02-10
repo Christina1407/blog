@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Builder
 public record PostCreateDto(
         @NotNull
@@ -18,6 +20,7 @@ public record PostCreateDto(
         @Size(min = 1, max = 2000, message = "text minLength = 1 maxLength = 2000")
         String text,
         @NotNull(message = "authorId is null")
-        Long authorId
+        Long authorId,
+        List<String> tags
 ) {
 }

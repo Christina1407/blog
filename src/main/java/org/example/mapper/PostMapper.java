@@ -18,7 +18,11 @@ public class PostMapper {
         return getBuild(post, comments, reactionCount);
     }
     public PostReadDto map(Post post) {
-        return getBuild(post);
+        return getBuild(post, null); // TODO переделать
+    }
+
+    public PostReadDto map(Post post, List<String> tags) {
+        return getBuild(post, tags);
     }
 
     public List<PostReadDto> map(List<Post> posts) {
@@ -43,7 +47,7 @@ public class PostMapper {
                 .build();
     }
 
-    private PostReadDto getBuild(Post post) {
+    private PostReadDto getBuild(Post post, List<String> tags) {
         return PostReadDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -56,6 +60,7 @@ public class PostMapper {
                 .reactionCount(Optional.ofNullable(post.getReactions())
                         .map(Set::size)
                         .orElse(0))
+                .tags(tags)
                 .build();
     }
 

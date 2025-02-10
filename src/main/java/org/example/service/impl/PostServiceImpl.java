@@ -13,6 +13,7 @@ import org.example.model.dto.*;
 import org.example.repo.PostReactionRepository;
 import org.example.repo.PostRepository;
 import org.example.service.PostService;
+import org.example.service.TagService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -35,12 +36,16 @@ public class PostServiceImpl implements PostService {
     private final UserManager userManager;
     private final PostManager postManager;
     private final PostReactionRepository postReactionRepository;
+    private final TagService tagService;
 
     @Override
     public PostReadDto savePost(PostCreateDto postCreateDto) {
         userManager.findUserById(postCreateDto.authorId());
         Post post = postMapper.map(postCreateDto);
-        return postMapper.map(postRepository.save(post));
+        Post savedPost = postRepository.save(post);
+        tagService.insertNotExistedTags(postCreateDto.tags());
+        tagService.addTagsToPost(postCreateDto.tags(), post.getId());
+        return postMapper.map(savedPost, postCreateDto.tags());//TODO проверить
     }
 
     @Override
