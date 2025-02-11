@@ -1,7 +1,5 @@
-package org.example.service;
+package org.example.service.interfaces;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import org.example.model.dto.CommentCreateDto;
 import org.example.model.dto.CommentEditDto;
 import org.example.model.dto.CommentReadDto;

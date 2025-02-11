@@ -3,7 +3,7 @@ package org.example.repo.impl;
 import lombok.RequiredArgsConstructor;
 import org.example.model.PostTag;
 import org.example.model.Tag;
-import org.example.repo.BatchTagRepository;
+import org.example.repo.interfaces.BatchTagRepository;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;

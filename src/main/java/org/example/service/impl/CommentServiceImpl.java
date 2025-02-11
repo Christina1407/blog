@@ -10,8 +10,8 @@ import org.example.model.Comment;
 import org.example.model.dto.CommentCreateDto;
 import org.example.model.dto.CommentEditDto;
 import org.example.model.dto.CommentReadDto;
-import org.example.repo.CommentRepository;
-import org.example.service.CommentService;
+import org.example.repo.interfaces.CommentRepository;
+import org.example.service.interfaces.CommentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

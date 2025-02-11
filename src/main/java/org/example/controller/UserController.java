@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.model.User;
 import org.example.model.dto.UserCreateDto;
 import org.example.model.dto.UserReadDto;
-import org.example.service.UserService;
+import org.example.service.interfaces.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

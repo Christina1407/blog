@@ -1,4 +1,4 @@
-package org.example.repo;
+package org.example.repo.interfaces;
 
 import org.example.model.PostTag;
 import org.example.model.Tag;

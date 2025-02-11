@@ -2,7 +2,7 @@ package org.example.manager;
 
 import lombok.RequiredArgsConstructor;
 import org.example.exception.NotFoundException;
-import org.example.repo.UserRepository;
+import org.example.repo.interfaces.UserRepository;
 import org.springframework.stereotype.Component;
 
 @Component

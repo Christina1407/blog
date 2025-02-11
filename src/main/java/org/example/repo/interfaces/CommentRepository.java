@@ -1,9 +1,7 @@
-package org.example.repo;
+package org.example.repo.interfaces;
 
 import org.example.model.Comment;
 import org.springframework.data.repository.CrudRepository;
-
-import java.util.List;
 
 public interface CommentRepository extends CrudRepository<Comment, Long> {
 

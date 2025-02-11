@@ -7,8 +7,8 @@ import org.example.mapper.UserMapper;
 import org.example.model.User;
 import org.example.model.dto.UserCreateDto;
 import org.example.model.dto.UserReadDto;
-import org.example.repo.UserRepository;
-import org.example.service.UserService;
+import org.example.repo.interfaces.UserRepository;
+import org.example.service.interfaces.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -42,5 +42,5 @@ public class Post {
     @MappedCollection(idColumn = "post_id")
     private Set<PostReaction> reactions;
     @MappedCollection(idColumn = "post_id")
-    private Set<PostTag> tags;
+    private Set<PostTag> postTags;
 }

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.model.dto.CommentCreateDto;
 import org.example.model.dto.CommentEditDto;
 import org.example.model.dto.CommentReadDto;
-import org.example.service.CommentService;
+import org.example.service.interfaces.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package org.example.repo;
+package org.example.repo.interfaces;
 
 import org.example.model.Post;
 import org.springframework.data.repository.CrudRepository;
