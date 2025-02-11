@@ -10,10 +10,10 @@ import org.example.mapper.PostMapper;
 import org.example.mapper.PostReactionMapper;
 import org.example.model.Post;
 import org.example.model.dto.*;
-import org.example.repo.PostReactionRepository;
-import org.example.repo.PostRepository;
-import org.example.service.PostService;
-import org.example.service.TagService;
+import org.example.repo.interfaces.PostReactionRepository;
+import org.example.repo.interfaces.PostRepository;
+import org.example.service.interfaces.PostService;
+import org.example.service.interfaces.TagService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -42,10 +42,10 @@ public class PostServiceImpl implements PostService {
     public PostReadDto savePost(PostCreateDto postCreateDto) {
         userManager.findUserById(postCreateDto.authorId());
         Post post = postMapper.map(postCreateDto);
-        Post savedPost = postRepository.save(post);
+        postRepository.save(post);
         tagService.insertNotExistedTags(postCreateDto.tags());
         tagService.addTagsToPost(postCreateDto.tags(), post.getId());
-        return postMapper.map(savedPost, postCreateDto.tags());//TODO проверить
+        return postMapper.map(postManager.findPostById(post.getId()));
     }
 
     @Override
@@ -61,9 +61,9 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public PostReadDto findPostById(Long postId) {
         Post post = postManager.findPostById(postId);
-        List<CommentReadDto> comments = commentMapper.map(post.getComments().stream().toList());
-        int reactionCount = post.getReactions().size();
-        return postMapper.map(post, comments, reactionCount);
+      //  List<CommentReadDto> comments = commentMapper.map(post.getComments().stream().toList());
+    //    int reactionCount = post.getReactions().size();
+        return postMapper.map(post);
     }
 
     @Override

@@ -1,9 +1,11 @@
 package org.example.mapper;
 
+import lombok.RequiredArgsConstructor;
 import org.example.model.Post;
-import org.example.model.dto.CommentReadDto;
+import org.example.model.PostTag;
 import org.example.model.dto.PostCreateDto;
 import org.example.model.dto.PostReadDto;
+import org.example.service.interfaces.TagService;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -12,17 +14,21 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class PostMapper {
 
-    public PostReadDto map(Post post, List<CommentReadDto> comments, int reactionCount) {
-        return getBuild(post, comments, reactionCount);
-    }
-    public PostReadDto map(Post post) {
-        return getBuild(post, null); // TODO переделать
-    }
+    private final CommentMapper commentMapper;
+    private final TagService tagService;
 
-    public PostReadDto map(Post post, List<String> tags) {
-        return getBuild(post, tags);
+//    public PostReadDto map(Post post, List<CommentReadDto> comments, int reactionCount) {
+//        return getBuild(post, comments, reactionCount);
+//    }
+//    public PostReadDto map(Post post) {
+//        return getBuild(post, null); // TODO переделать
+//    }
+
+    public PostReadDto map(Post post) {
+        return getBuild(post);
     }
 
     public List<PostReadDto> map(List<Post> posts) {
@@ -35,32 +41,24 @@ public class PostMapper {
         return getBuild(postCreateDto);
     }
 
-    private PostReadDto getBuild(Post post, List<CommentReadDto> comments, int reactionCount) {
-        return PostReadDto.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .text(post.getText())
-                .createdDate(post.getCreatedDate())
-                .authorId(post.getAuthorId())
-                .comments(comments)
-                .reactionCount(reactionCount)
-                .build();
-    }
 
-    private PostReadDto getBuild(Post post, List<String> tags) {
+    private PostReadDto getBuild(Post post) {
         return PostReadDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .text(post.getText())
                 .createdDate(post.getCreatedDate())
                 .authorId(post.getAuthorId())
+                .tags(tagService.getTagNames(post.getPostTags().stream()
+                        .map(PostTag::getTagId)
+                        .toList()))
+                .comments(commentMapper.map(post.getComments()))
                 .commentCount(Optional.ofNullable(post.getComments())
                         .map(Set::size)
                         .orElse(0))
                 .reactionCount(Optional.ofNullable(post.getReactions())
                         .map(Set::size)
                         .orElse(0))
-                .tags(tags)
                 .build();
     }
 
