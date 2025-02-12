@@ -23,4 +23,6 @@ public interface PostService {
     PostReadDto editPost(PostEditDto postEditDto, Long postId);
 
     void changeImage(Long postId, MultipartFile image);
+
+    Page<PostReadDto> findPostsByTag(String tagName, Pageable pageable);
 }

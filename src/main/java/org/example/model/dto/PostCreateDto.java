@@ -21,6 +21,7 @@ public record PostCreateDto(
         String text,
         @NotNull(message = "authorId is null")
         Long authorId,
+        @Size(max = 5, message = "Количество тегов не должно превышать 5")
         List<String> tags
 ) {
 }

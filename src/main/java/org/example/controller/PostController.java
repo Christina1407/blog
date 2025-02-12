@@ -65,6 +65,12 @@ public class PostController {
         log.info("Get post id = {}", postId);
         return postService.findPostById(postId);
     }
+    @GetMapping("/tags/{tag}")
+    public Page<PostReadDto> getPostsByTag(@PathVariable("tag") String tagName,
+                                     Pageable pageable) {
+        log.info("Get posts tag = {}", tagName);
+        return postService.findPostsByTag(tagName, pageable);
+    }
 
     @PutMapping(value = "/{postId}/image", consumes = "multipart/form-data")
     public void changeImage(@PathVariable("postId") Long postId,

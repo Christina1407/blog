@@ -20,13 +20,6 @@ public class PostMapper {
     private final CommentMapper commentMapper;
     private final TagService tagService;
 
-//    public PostReadDto map(Post post, List<CommentReadDto> comments, int reactionCount) {
-//        return getBuild(post, comments, reactionCount);
-//    }
-//    public PostReadDto map(Post post) {
-//        return getBuild(post, null); // TODO переделать
-//    }
-
     public PostReadDto map(Post post) {
         return getBuild(post);
     }

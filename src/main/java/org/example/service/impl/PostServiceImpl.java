@@ -5,13 +5,16 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.example.manager.PostManager;
 import org.example.manager.UserManager;
-import org.example.mapper.CommentMapper;
 import org.example.mapper.PostMapper;
 import org.example.mapper.PostReactionMapper;
 import org.example.model.Post;
-import org.example.model.dto.*;
+import org.example.model.dto.PostCreateDto;
+import org.example.model.dto.PostEditDto;
+import org.example.model.dto.PostReactionDto;
+import org.example.model.dto.PostReadDto;
 import org.example.repo.interfaces.PostReactionRepository;
 import org.example.repo.interfaces.PostRepository;
+import org.example.repo.interfaces.PostTagRepository;
 import org.example.service.interfaces.PostService;
 import org.example.service.interfaces.TagService;
 import org.springframework.data.domain.Page;
@@ -31,12 +34,12 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
-    private final CommentMapper commentMapper;
     private final PostReactionMapper reactionMapper;
     private final UserManager userManager;
     private final PostManager postManager;
     private final PostReactionRepository postReactionRepository;
     private final TagService tagService;
+    private final PostTagRepository postTagRepository;
 
     @Override
     public PostReadDto savePost(PostCreateDto postCreateDto) {
@@ -61,9 +64,17 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public PostReadDto findPostById(Long postId) {
         Post post = postManager.findPostById(postId);
-      //  List<CommentReadDto> comments = commentMapper.map(post.getComments().stream().toList());
-    //    int reactionCount = post.getReactions().size();
         return postMapper.map(post);
+    }
+
+    @Override
+    public Page<PostReadDto> findPostsByTag(String tagName, Pageable pageable) {
+        Long tagId = tagService.getTagId(tagName);
+        List<Long> postIds = postTagRepository.findPostIdsByTagId(tagId);
+        Page<Post> postPage = postRepository.findByIdIn(postIds, pageable);
+        List<Post> posts = postPage.stream().
+                toList();
+        return new PageImpl<>(postMapper.map(posts), pageable, postPage.getTotalElements());
     }
 
     @Override
@@ -82,12 +93,20 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostReadDto editPost(PostEditDto postEditDto, Long postId) {
         Post post = postManager.findPostById(postId);
-       Optional.ofNullable(postEditDto.text())
-               .ifPresent(post::setText);
+        Optional.ofNullable(postEditDto.text())
+                .ifPresent(post::setText);
         Optional.ofNullable(postEditDto.title())
                 .ifPresent(post::setTitle);
+        Optional.ofNullable(postEditDto.tags())
+                .ifPresent(tags -> {
+                    postTagRepository.deleteAll(post.getPostTags());
+                    tagService.insertNotExistedTags(postEditDto.tags());
+                    tagService.addTagsToPost(postEditDto.tags(), postId);
+                    post.setPostTags(postTagRepository.findByPostId(postId));
+                });
         return postMapper.map(postRepository.save(post));
     }
+
 
     @Override
     @SneakyThrows
@@ -96,4 +115,6 @@ public class PostServiceImpl implements PostService {
         post.setImage(image.getBytes());
         postRepository.save(post);
     }
+
+
 }

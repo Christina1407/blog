@@ -1,6 +1,7 @@
 package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.example.exception.NotFoundException;
 import org.example.model.PostTag;
 import org.example.model.Tag;
 import org.example.repo.interfaces.BatchTagRepository;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -50,6 +52,7 @@ public class TagServiceImpl implements TagService {
                 .toList();
         batchTagRepository.insertPostTags(postTags);
     }
+
     @Override
     @Transactional(readOnly = true)
     public List<String> getTagNames(List<Long> ids) {
@@ -62,6 +65,22 @@ public class TagServiceImpl implements TagService {
         return new ArrayList<>();
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Long getTagId(String tagName) {
+        return Optional.of(tagName)
+                .map(tagRepository::findByName)
+                .orElseThrow(() -> new NotFoundException(String.format("Tag with name = %s was not found", tagName)))
+                .getId();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Tag> getTagsByNames(List<String> tagNames) {
+        return Optional.of(tagNames)
+                .map(tagRepository::findByNameIn)
+                .orElseThrow(() -> new NotFoundException(String.format("Tag with name = %s was not found", tagNames)));
+    }
 
 
 }
