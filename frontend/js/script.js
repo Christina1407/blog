@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     postsContainer.innerHTML = ""; // Очистка контейнера
     posts.forEach((post) => {
       const postElement = document.createElement("div");
+      postElement.classList.add("block", "post-block");
       postElement.classList.add("post");
 
       const title = document.createElement("h2");
@@ -61,6 +62,18 @@ document.addEventListener("DOMContentLoaded", function () {
       postElement.appendChild(text);
       postElement.appendChild(image);
       postElement.appendChild(stats);
+      // Добавляем отображение тегов
+      if (post.tags && post.tags.length > 0) {
+        const tagsElement = document.createElement("div");
+        tagsElement.className = "post-tags";
+        post.tags.forEach((tag) => {
+          const tagSpan = document.createElement("span");
+          tagSpan.className = "tag";
+          tagSpan.textContent = `#${tag}`;
+          tagsElement.appendChild(tagSpan);
+        });
+        postElement.appendChild(tagsElement);
+      }
 
       postsContainer.appendChild(postElement);
     });
@@ -85,6 +98,18 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       pageButton.addEventListener("click", () => fetchPosts(i));
       paginationContainer.appendChild(pageButton);
+    }
+
+    if (post.tags && post.tags.length > 0) {
+      const tagsElement = document.createElement("div");
+      tagsElement.className = "post-tags";
+      post.tags.forEach(tag => {
+        const tagSpan = document.createElement("span");
+        tagSpan.className = "tag";
+        tagSpan.textContent = tag;
+        tagsElement.appendChild(tagSpan);
+      });
+      postElement.appendChild(tagsElement);
     }
 
     const nextButton = document.createElement("button");

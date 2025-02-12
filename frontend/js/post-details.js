@@ -31,18 +31,19 @@ document.addEventListener("DOMContentLoaded", function () {
         <div id="postText"></div>
         <img src="http://localhost:8080/blog/posts/image?postId=${post.id}" alt="${post.title}">
         <p id="likeCount" style="cursor: pointer;">&#x2764; ${post.reactionCount}</p>
+        <div id="postTags">${post.tags ? post.tags.map(tag => `#${tag}`).join(', ') : ''}</div>
     `;
 
-    const postTextContainer = document.getElementById('postText');
-    
+    const postTextContainer = document.getElementById("postText");
+
     // Разбиваем текст на абзацы и создаем для каждого элемент <p>
-    const paragraphs = post.text.split('\n\n');
-    paragraphs.forEach(paragraph => {
-        if (paragraph.trim() !== '') {
-            const p = document.createElement('p');
-            p.textContent = paragraph.trim();
-            postTextContainer.appendChild(p);
-        }
+    const paragraphs = post.text.split("\n\n");
+    paragraphs.forEach((paragraph) => {
+      if (paragraph.trim() !== "") {
+        const p = document.createElement("p");
+        p.textContent = paragraph.trim();
+        postTextContainer.appendChild(p);
+      }
     });
 
     // Добавляем обработчик события для кнопки "Назад к постам"
@@ -52,8 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "index.html";
       });
 
-    makeEditable("postTitle", post.id, "title");
-    makeEditable("postText", post.id, "text");
+    makeEditable("postTitle", postId, "title");
+    makeEditable("postText", postId, "text");
 
     document
       .getElementById("likeCount")
@@ -83,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
     initComments(post.comments, postId);
-}
+  }
 
   async function deletePost(postId) {
     try {

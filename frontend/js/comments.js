@@ -1,3 +1,5 @@
+import { makeEditable } from "./edit-post.js";
+
 const commentsContainer = document.getElementById("comments");
 
 export function initComments(comments, postId) {
@@ -31,6 +33,7 @@ function createCommentElement(comment, postId) {
 
     return commentElement;
 }
+
 
 function makeCommentEditable(element, commentId, postId) {
     const currentText = element.textContent;

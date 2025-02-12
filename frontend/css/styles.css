@@ -170,3 +170,61 @@ input[type="file"] {
   height: 300px; /* Set the desired height */
   object-fit: cover; /* Maintain aspect ratio and cover the area */
 }
+
+
+.post-tags {
+  margin-top: 10px;
+}
+
+.tag {
+  display: inline-block;
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 2px 8px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+/* Общие стили для блоков */
+.block {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* Стили для блока поста на главной странице */
+.post-block {
+  border-left: 4px solid #007bff;
+}
+
+/* Стили для блока отдельного поста */
+.single-post-block {
+  border-left: 4px solid #28a745;
+}
+
+/* Стили для блока добавления поста */
+.add-post-block {
+  border-left: 4px solid #ffc107;
+}
+
+/* Стили для блока комментариев */
+.comments-block {
+  border-left: 4px solid #17a2b8;
+}
+
+/* Дополнительные стили для заголовков внутри блоков */
+.block h2 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Стили для разделения элементов внутри блока */
+.block-content {
+  margin-top: 15px;
+}
