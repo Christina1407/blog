@@ -5,11 +5,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.model.Post;
 import org.example.model.dto.PostCreateDto;
 import org.example.model.dto.PostEditDto;
-import org.example.model.dto.PostReadDto;
 import org.example.model.dto.PostReactionDto;
+import org.example.model.dto.PostReadDto;
 import org.example.repo.interfaces.PostRepository;
 import org.example.service.interfaces.PostService;
 import org.springframework.data.domain.Page;
@@ -18,9 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/posts")
@@ -78,26 +74,9 @@ public class PostController {
         postService.changeImage(postId, image);
     }
 
-    @GetMapping("/image")//TODO переделать
-    public void getImage(@RequestParam("postId") Long postId, HttpServletResponse response) throws IOException {
-        Optional<Post> byId = postRepository.findById(postId);
-
-        if (byId.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return; // Завершаем выполнение метода, если пост не найден
-        }
-
-        Post post = byId.get(); // Получаем объект Post из Optional
-        byte[] imageBytes = post.getImage();
-
-
-        if (imageBytes != null) {
-            response.setContentType("image/jpeg"); // Укажите правильный MIME-тип для вашего изображения
-            response.getOutputStream().write(imageBytes);
-            response.getOutputStream().flush();
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
+    @GetMapping("/image")
+    public void getImage(@RequestParam("postId") Long postId, HttpServletResponse response) {
+        postService.getImage(postId, response);
     }
     @PostMapping("/reactions")
     public void addReaction(@RequestBody PostReactionDto reactionDto) {

@@ -1,5 +1,6 @@
 package org.example.service.interfaces;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.model.dto.PostCreateDto;
 import org.example.model.dto.PostEditDto;
 import org.example.model.dto.PostReadDto;
@@ -25,4 +26,6 @@ public interface PostService {
     void changeImage(Long postId, MultipartFile image);
 
     Page<PostReadDto> findPostsByTag(String tagName, Pageable pageable);
+
+    void getImage(Long postId, HttpServletResponse response);
 }
