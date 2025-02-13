@@ -12,7 +12,7 @@
       <div id="postDetails">
         <h2 id="postTitle"></h2>
         <div id="postText"></div>
-        <div id="postTags"></div>
+        <div id="postTags" class="editable"></div>
         <img id="postImage" alt="Post image" />
         <input
           type="file"
@@ -21,11 +21,11 @@
           style="display: none"
         />
       </div>
-      <div id="comments"></div>
       <div>
         <input type="file" id="imageUpload" accept="image/*" />
         <button onclick="updatePostImage(window.postId)">Update Image</button>
       </div>
+      <div id="comments"></div>
       <div id="addCommentSection">
         <textarea id="newCommentText" placeholder="Add a comment..."></textarea>
         <button id="addCommentButton" class="button">Add Comment</button>

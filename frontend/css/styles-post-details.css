@@ -122,6 +122,10 @@ textarea {
 #postImage {
   max-width: 100%;
   height: auto;
-  margin-top: 1em;
-  margin-bottom: 1em;
+  object-fit: cover;
+  max-height: 500px;
+  display: block;
+  margin: 20px 0; /* Adjusted to remove auto centering */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }

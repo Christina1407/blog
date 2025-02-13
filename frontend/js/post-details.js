@@ -29,11 +29,13 @@ document.addEventListener("DOMContentLoaded", function () {
     postDetailsContainer.innerHTML = `
         <h2 id="postTitle">${post.title}</h2>
         <div id="postText"></div>
-        <img src="http://localhost:8080/blog/posts/image?postId=${post.id}" alt="${post.title}">
+        <img id="postImage" src="http://localhost:8080/blog/posts/image?postId=${post.id}" alt="${post.title}">
         <p id="likeCount" style="cursor: pointer;">&#x2764; ${post.reactionCount}</p>
         <div id="postTags">${post.tags ? post.tags.map(tag => `#${tag}`).join(', ') : ''}</div>
     `;
 
+    const postTagsContainer = document.getElementById("postTags");
+    postTagsContainer.innerHTML = post.tags ? post.tags.map(tag => `#${tag}`).join(', ') : 'No tags';
     const postTextContainer = document.getElementById("postText");
 
     // Разбиваем текст на абзацы и создаем для каждого элемент <p>
@@ -55,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     makeEditable("postTitle", postId, "title");
     makeEditable("postText", postId, "text");
+    makeEditable("postTags", postId, "tags");
 
     document
       .getElementById("likeCount")

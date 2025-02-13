@@ -7,28 +7,32 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<div class="container">
-    <h1>Добавить пост</h1>
-    <form id="addPostForm" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="title">Заголовок:</label>
-            <input type="text" id="title" name="title" required>
-        </div>
-        <div class="form-group">
-            <label for="text">Текст:</label>
-            <input type="text" id="text" name="text" required>
-        </div>
-        <div class="form-group">
-            <label for="authorId">Id автора:</label>
-            <input type="text" id="authorId" name="authorId" required>
-        </div>
-        <div class="form-group">
-            <label for="image">Фотография:</label>
-            <input type="file" id="image" name="image" accept="image/*" required>
-        </div>
-        <button type="submit">Добавить пост</button>
-    </form>
-</div>
+    <div class="container">
+        <h1>Добавить пост</h1>
+        <form id="addPostForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">Заголовок:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="text">Текст:</label>
+                <input type="text" id="text" name="text" required>
+            </div>
+            <div class="form-group">
+                <label for="authorId">Id автора:</label>
+                <input type="text" id="authorId" name="authorId" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Фотография:</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="tags">Теги (разделите запятыми):</label>
+                <input type="text" id="tags" name="tags">
+            </div>
+            <button type="submit">Добавить пост</button>
+        </form>
+    </div>
 
 <script src="js/add-post.js"></script>
 </body>

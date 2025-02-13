@@ -2,11 +2,17 @@ export function makeEditable(elementId, postId, field) {
     const element = document.getElementById(elementId);
     let originalContent;
 
-    element.addEventListener("click", function() {
+    function addClickListener() {
+        element.addEventListener("click", startEditing);
+    }
+
+    function startEditing() {
         if (field === "text") {
             originalContent = Array.from(element.children)
                 .map(p => p.textContent)
                 .join('\n\n');
+        } else if (field === "tags") {
+            originalContent = element.textContent.replace(/#/g, '').split(', ').join(',');
         } else {
             originalContent = element.textContent;
         }
@@ -19,24 +25,26 @@ export function makeEditable(elementId, postId, field) {
         element.replaceWith(textarea);
         textarea.focus();
 
-        textarea.addEventListener("blur", function() {
-            const newText = textarea.value.trim();
-            if (newText !== originalContent) {
-                updatePost(postId, field, newText);
-            } else {
-                restoreOriginalContent();
-            }
-        });
-
+        textarea.addEventListener("blur", finishEditing);
         textarea.addEventListener("keydown", function(e) {
             if (e.ctrlKey && e.key === "Enter") {
                 e.preventDefault();
                 textarea.blur();
             }
         });
-    });
+    }
 
-    function restoreOriginalContent() {
+    function finishEditing() {
+        const textarea = document.querySelector(`textarea`);
+        const newText = textarea.value.trim();
+        if (newText !== originalContent) {
+            updatePost(postId, field, newText);
+        } else {
+            restoreOriginalContent(textarea);
+        }
+    }
+
+    function restoreOriginalContent(textarea) {
         if (field === "text") {
             const div = document.createElement("div");
             div.id = elementId;
@@ -48,14 +56,23 @@ export function makeEditable(elementId, postId, field) {
                 }
             });
             textarea.replaceWith(div);
+        } else if (field === "tags") {
+            const div = document.createElement("div");
+            div.id = elementId;
+            div.textContent = originalContent.split(',').map(tag => `#${tag.trim()}`).join(', ');
+            textarea.replaceWith(div);
         } else {
             const h2 = document.createElement("h2");
             h2.id = elementId;
             h2.textContent = originalContent;
             textarea.replaceWith(h2);
         }
+        addClickListener();
     }
+
+    addClickListener();
 }
+
 
 // Function to handle image upload
 export function updatePostImage(postId) {
@@ -92,23 +109,31 @@ window.updatePostImage = updatePostImage;
 
 async function updatePost(postId, field, newText) {
     try {
+        let body;
+        if (field === "tags") {
+            body = JSON.stringify({
+                tags: newText.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
+            });
+        } else {
+            body = JSON.stringify({
+                [field]: newText,
+            });
+        }
+
         const response = await fetch(`http://localhost:8080/blog/posts/${postId}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-                [field]: newText,
-            }),
+            body: body,
         });
         if (!response.ok) {
             throw new Error(`Ошибка при редактировании ${field}`);
         }
-        alert(`${field.charAt(0).toUpperCase() + field.slice(1)} edited successfully!`);
         location.reload();
     } catch (error) {
         console.error("Ошибка:", error);
-        alert(`Failed to edit the ${field}.`);
+        alert(`Не удалось отредактировать ${field}.`);
     }
 }
 
