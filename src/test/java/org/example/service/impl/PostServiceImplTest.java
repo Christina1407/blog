@@ -13,6 +13,7 @@ import org.example.model.dto.PostReadDto;
 import org.example.model.enums.ReactionType;
 import org.example.repo.interfaces.PostReactionRepository;
 import org.example.repo.interfaces.PostRepository;
+import org.example.service.interfaces.TagService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,6 +38,8 @@ public class PostServiceImplTest {
     private  PostManager postManager;
     @Mock
     private  PostReactionRepository postReactionRepository;
+    @Mock
+    private TagService tagService;
 
     @InjectMocks
     private PostServiceImpl postService;
