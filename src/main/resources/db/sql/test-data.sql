@@ -1,0 +1,1 @@
+insert into user_account (email, name) values ('test@test.ru', 'testName'); 
