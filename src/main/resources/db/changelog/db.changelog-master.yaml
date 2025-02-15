@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Christina
+      changes:
+        - sqlFile:
+            path: ../sql/schema.sql
+            relativeToChangelogFile: true
+        - sqlFile:
+            path: ../sql/test-data.sql
+            relativeToChangelogFile: true

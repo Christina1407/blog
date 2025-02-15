@@ -1,5 +1,6 @@
 package org.example.configuration;
 
+import liquibase.integration.spring.SpringLiquibase;
 import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -46,14 +47,12 @@ public class DataSourceConfiguration extends AbstractJdbcConfiguration {
     public TransactionManager transactionManager(DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
-//    @Bean
-//    public JdbcMappingContext jdbcMappingContext() {
-//        return new JdbcMappingContext();
-//    }
-//
-//    @Bean
-//    public Dialect dialect() {
-//        return new JdbcPostgresDialect();
-//    }
 
+    @Bean
+    public SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setChangeLog("classpath:db/changelog/db.changelog-master.yaml");
+        liquibase.setDataSource(dataSource);
+        return liquibase;
+    }
 }
