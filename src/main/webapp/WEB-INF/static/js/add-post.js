@@ -26,9 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!response.ok) {
                 throw new Error('Ошибка при добавлении поста');
             }
-
-            alert('Пост успешно добавлен!');
-            window.location.href = '/'; // Перенаправление на главную страницу
+            window.location.href = 'index.html'; // Перенаправление на главную страницу
         } catch (error) {
             console.error('Ошибка:', error);
             alert('Произошла ошибка при добавлении поста');

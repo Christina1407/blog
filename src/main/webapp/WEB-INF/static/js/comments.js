@@ -104,7 +104,7 @@ export async function addComment(postId, text) {
             },
             body: JSON.stringify({
                 text: text,
-                authorId: 2,
+                authorId: 1,
                 postId: postId,
             }),
         });

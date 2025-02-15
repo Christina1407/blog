@@ -41,7 +41,6 @@ h1 {
 
 .post p {
   color: #666;
-  /* Добавьте эти стили */
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -166,9 +165,9 @@ input[type="file"] {
 }
 
 .post img {
-  width: 300px; /* Set the desired width */
-  height: 300px; /* Set the desired height */
-  object-fit: cover; /* Maintain aspect ratio and cover the area */
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
 }
 
 
